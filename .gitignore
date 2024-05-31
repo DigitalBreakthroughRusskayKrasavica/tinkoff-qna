@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# configs
+backend/.configs/app.docker.toml
+backend/.configs/app.toml
+backend/.configs/db.env
+
 # Distribution / packaging
 .Python
 build/

@@ -18,8 +18,7 @@ from tinkoff_qna.services import HelperService
 
 from .config import AppConfig, WebConfig
 from .depends_stub import Stub
-
-router = APIRouter()
+from .router import router
 
 
 class MsgResponse(BaseModel):
@@ -30,16 +29,6 @@ class MsgResponse(BaseModel):
     """
 
     msg: str
-
-
-@router.get("/")
-async def read_main() -> MsgResponse:
-    """Read the root endpoint (Only in testing purposes).
-
-    Returns:
-        MsgResponse: The message response instance.
-    """
-    return MsgResponse(msg="Welcome to Curator-support API!")
 
 
 def initialise_routers(app: FastAPI) -> None:
