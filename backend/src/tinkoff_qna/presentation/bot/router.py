@@ -15,27 +15,27 @@ from tinkoff_qna import exceptions
 from tinkoff_qna.services import HelperService
 from tinkoff_qna.models import Role
 
-from tinkoff_qna.presentation.bot.commands import get_curator_commands, COMMON_COMMANDS
+from tinkoff_qna.presentation.bot.commands import get_support_technician_commands, COMMON_COMMANDS
 
 from tinkoff_qna.presentation.bot.filters import SupportTechFilter
 
 router = Router(name=__name__)
 
 
-@router.message(Command('become_curator'))
-async def become_curator(msg: types.Message, state: FSMContext, bot: Bot, service: HelperService):
-    await service.change_role(msg.chat.id, Role.CURATOR)
+@router.message(Command('become_tech_support'))
+async def become_tech_support(msg: types.Message, state: FSMContext, bot: Bot, service: HelperService):
+    await service.change_role(msg.chat.id, Role.SUPPORT_TECHNICIAN)
 
-    await bot.set_my_commands(get_curator_commands(), BotCommandScopeChat(chat_id=msg.chat.id))
-    await msg.answer("Вы теперь куратор")
+    await bot.set_my_commands(get_support_technician_commands(), BotCommandScopeChat(chat_id=msg.chat.id))
+    await msg.answer("Вы теперь специалист тех. поддержки")
 
 
-@router.message(Command('become_student'))
-async def become_student(msg: types.Message, state: FSMContext, bot: Bot, service: HelperService):
-    await service.change_role(msg.chat.id, Role.STUDENT)
+@router.message(Command('become_client'))
+async def become_client(msg: types.Message, state: FSMContext, bot: Bot, service: HelperService):
+    await service.change_role(msg.chat.id, Role.CLIENT)
     
     await bot.set_my_commands(COMMON_COMMANDS, BotCommandScopeChat(chat_id=msg.chat.id))
-    await msg.answer("Вы теперь студент")
+    await msg.answer("Вы теперь клиент")
     
 
 
@@ -67,7 +67,7 @@ async def get_question(msg: types.Message, state: FSMContext, service: HelperSer
                 inline_keyboard=[
                     [
                         InlineKeyboardButton(
-                            text="Связаться со специалистом тех. поддержки",
+                            text="Связаться с тех. поддержкой",
                             callback_data=f'start_conversation-{msg.chat.id}'
                         )
                     ]

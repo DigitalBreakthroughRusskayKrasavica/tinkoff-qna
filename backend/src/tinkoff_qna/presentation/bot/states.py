@@ -9,4 +9,8 @@ class NewPairForm(StatesGroup):
     question = State()
     category = State()
     answer = State()
+    url = State()
 
+
+class NewPromptForm(StatesGroup):
+    prompt = State()

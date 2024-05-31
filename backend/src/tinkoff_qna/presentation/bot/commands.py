@@ -4,14 +4,14 @@ from aiogram.types import BotCommand
 
 COMMON_COMMANDS = [
     BotCommand(command="start", description="Перезапустить бота"),
-    BotCommand(command="become_student", description="[Interactive] Стать студентом"),
-    BotCommand(command="become_curator", description="[Interactive] Стать куратором"),
+    BotCommand(command="become_client", description="[Interactive] Стать клиентом"),
+    BotCommand(command="become_tech_support", description="[Interactive] Стать специалистом тех. поддержки"),
 ]
 
 
-def get_curator_commands() -> List[BotCommand]:
+def get_support_technician_commands() -> List[BotCommand]:
     return [
-        *COMMON_COMMANDS,
+        *COMMON_COMMANDS[:-1],
         BotCommand(command="new_pair", description="Добавить пару вопрос-ответ"),
-        BotCommand(command="set_model", description="Сменить модель"),
+        BotCommand(command="set_prompt", description="Выставить промпт для модели"),
     ]

@@ -4,7 +4,7 @@ from aiogram import BaseMiddleware, Bot, types
 from aiogram.enums.message_entity_type import MessageEntityType
 from aiogram.types import BotCommandScopeChat, TelegramObject
 
-from tinkoff_qna.presentation.bot.commands import get_curator_commands
+from tinkoff_qna.presentation.bot.commands import get_support_technician_commands, COMMON_COMMANDS
 from tinkoff_qna.database.repository import DbRepository
 from tinkoff_qna.models import Role
 
@@ -40,14 +40,14 @@ class AuthMiddleware(BaseMiddleware):
             return await handler(msg, data)
 
         if not user_exists:
-            commands, role = [], Role.CLIENT
+            commands, role = COMMON_COMMANDS, Role.CLIENT
 
             if not msg.text:
                 return
 
             _, arg = self._parse_command(msg.text)
             if arg == self._curator_secret_key:
-                commands, role = get_curator_commands(), Role.SUPPORT_TECHNICIAN
+                commands, role = get_support_technician_commands(), Role.SUPPORT_TECHNICIAN
 
             await self._repo.add_user(chat_id, role)
 

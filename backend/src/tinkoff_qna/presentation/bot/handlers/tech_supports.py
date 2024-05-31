@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from tinkoff_qna.presentation.bot.filters import SupportTechFilter
-from tinkoff_qna.presentation.bot.states import NewPairForm
+from tinkoff_qna.presentation.bot.states import NewPairForm, NewPromptForm
 from tinkoff_qna.services import HelperService
 
 router = Router()
@@ -30,7 +30,7 @@ async def get_question(msg: types.Message, state: FSMContext, bot: Bot):
         await bot.delete_message(chat_id=msg.chat.id, message_id=msg.message_id - 1)
     except Exception:
         pass
-    await msg.answer('Введите категорию этого вопроса', reply_markup=CANCEL_KEYBOARD)
+    await msg.answer('Введите категорию/тип этого вопроса', reply_markup=CANCEL_KEYBOARD)
 
 
 @router.message(StateFilter(NewPairForm.category))
@@ -47,10 +47,22 @@ async def get_question_category(msg: types.Message, state: FSMContext, bot: Bot)
 
 @router.message(StateFilter(NewPairForm.answer))
 async def get_answer(msg: types.Message, state: FSMContext, bot: Bot, service: HelperService):
-    data = await state.get_data()
-    question, category, answer = data['question'], data['category'], msg.text
+    await state.update_data(answer=msg.text)
+    await state.set_state(NewPairForm.url)
 
-    await service.add_new_pair(question, category, answer)
+    try:
+        await bot.delete_message(chat_id=msg.chat.id, message_id=msg.message_id - 1)
+    except Exception:
+        pass
+    await msg.answer('Введите ссылку для этого вопроса', reply_markup=CANCEL_KEYBOARD)
+
+
+@router.message(StateFilter(NewPairForm.url))
+async def get_answer(msg: types.Message, state: FSMContext, bot: Bot, service: HelperService):
+    data = await state.get_data()
+    question, category, answer, url = data['question'], data['category'], data['answer'], msg.text
+
+    await service.add_new_pair(question, category, answer, url)
 
     await state.clear()
 
@@ -74,32 +86,39 @@ async def cancel_appending(callback: types.CallbackQuery, state: FSMContext, bot
     await bot.send_message(chat_id=callback.from_user.id, text='Вы отменили процесс добавления пары')
 
 
-@router.message(Command('set_model'))
-async def set_other_model(msg: types.Message):
-    with open('current_model', 'r') as f:
-        current_model = f.read().rstrip()
+@router.message(Command('set_prompt'))
+async def set_new_prompt(msg: types.Message, state: FSMContext):
+    with open('current_prompt', 'r') as f:
+        current_prompt = f.read().rstrip()
     await msg.answer(
-        text='Выберите модель, которая будет отвечать на вопросы\n\n'
-             f"Текущая: {current_model}",
-        reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(text='Rubert', callback_data='set_model-rubert'),
-                    InlineKeyboardButton(text='Rasa', callback_data='set_model-rasa'),
-                ]
-            ]
-        )
+        text='Введите новый промпт для модели\n\n'
+             f"Текущий: '{current_prompt}'",
+        reply_markup=CANCEL_KEYBOARD
     )
+    await state.set_state(NewPromptForm.prompt)
 
 
-@router.callback_query(F.data.startswith('set_model'))
-async def set_model(callback: types.CallbackQuery, bot: Bot):
-    model = callback.data.split('-')[1]
-    with open('current_model', 'w') as f:
-        f.write(model)
+@router.message(StateFilter(NewPromptForm.prompt))
+async def set_prompt(msg: types.Message, state: FSMContext, bot: Bot):
+    prompt = msg.text
+    with open('current_prompt', 'w') as f:
+        f.write(prompt)
 
+    try:
+        await bot.delete_message(chat_id=msg.from_user.id, message_id=msg.message_id - 1)
+    except Exception:
+        pass
+
+    await state.clear()
+    await bot.send_message(msg.from_user.id, f"Выставлен новый промпт '{prompt}'")
+
+
+@router.callback_query(StateFilter(NewPromptForm.prompt), F.data == 'stop_appending')
+async def cancel_appending(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
+    await state.clear()
     try:
         await bot.delete_message(chat_id=callback.from_user.id, message_id=callback.message.message_id)
     except Exception:
         pass
-    await bot.send_message(callback.from_user.id, f"Выставлена модель '{model}'")
+    await bot.send_message(chat_id=callback.from_user.id, text='Вы отменили процесс изменения промпта')
+

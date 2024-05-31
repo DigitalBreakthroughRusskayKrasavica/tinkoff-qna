@@ -29,9 +29,9 @@ class HelperService:
         answer, links = await loop.run_in_executor(None, self.rubert_model.find_best, question)
         return answer, links
 
-    async def add_new_pair(self, question, category, answer):
+    async def add_new_pair(self, question, category, answer, url):
         embeddings = self.rubert_model.generate_embeddings([question])
-        await self.db_repo.add_new_pair(question, embeddings, category, answer)
+        await self.db_repo.add_new_pair(question, embeddings, category, answer, url)
 
     async def find_unassigned_curator(self, redis_connection: Redis) -> int:
         curators = await self.db_repo.get_all_support_technicians()

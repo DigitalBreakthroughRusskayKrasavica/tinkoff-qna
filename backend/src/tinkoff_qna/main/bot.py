@@ -16,7 +16,7 @@ from tinkoff_qna.database.sa_utils import create_engine, create_session_maker
 from tinkoff_qna.lms.rubert.get_answer import BertModel
 
 from tinkoff_qna.presentation.bot.router import router
-from tinkoff_qna.presentation.bot.handlers.curators import router as curator_router
+from tinkoff_qna.presentation.bot.handlers.tech_supports import router as curator_router
 from tinkoff_qna.presentation.bot.handlers.conversation import router as conversation_router
 
 from redis.asyncio import Redis

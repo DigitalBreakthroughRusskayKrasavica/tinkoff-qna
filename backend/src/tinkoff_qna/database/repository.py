@@ -42,25 +42,20 @@ class DbRepository:
             res = await session.scalars(stmt)
         return res.all()
 
-    async def add_new_pair(self, question, embeddings, category, answer):
+    async def add_new_pair(self, question: str, embeddings: str, category: str, answer: str, url: str) -> None:
         async with self._session_factory() as session:
-            stmt = select(Answer.id).order_by(desc(Answer.id)).limit(1)
-            ans_last_id = await session.scalar(stmt)
-
-            ans = Answer(
-                id=ans_last_id + 1,
-                answer=answer
-            )
-            session.add(ans)
-            await session.flush([ans])
-
             session.add(
                 QuestionAnswer(
                     question=question,
+                    product='',
+                    source='',
+                    url=url,
+                    type_=category,
                     embedding=embeddings,
-                    category=category,
-                    answer_class=ans.id,
-                )
+                    parent_title='',
+                    parent_url='',
+                    answer=answer,
+                ),
             )
             await session.commit()
 

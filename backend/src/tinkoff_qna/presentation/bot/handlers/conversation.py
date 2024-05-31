@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 router = Router()
 
-CANCEL_KEYWORDS = "Отменить диалог"
+CANCEL_KEYWORDS = "Завершить диалог"
 CANCEL_KEYBOARD = ReplyKeyboardMarkup(
     keyboard=[[KeyboardButton(text=CANCEL_KEYWORDS)]], resize_keyboard=True
 )
@@ -46,7 +46,7 @@ async def start_conversation(
 
     curator_id = await service.find_unassigned_curator(redis_connection)
     if curator_id == 0:
-        return await callback.message.answer("Нет свободных кураторов")
+        return await callback.message.answer("Нет свободных специалистов")
 
     await redis_connection.set(curator_id, student_id)
 
@@ -70,7 +70,7 @@ async def start_conversation(
         logger.info("Message has incorrect type")
         return
 
-    await bot.send_message(curator_id, text=f'Студент {student_id} спрашивает:')
+    await bot.send_message(curator_id, text=f'Клиент {student_id} спрашивает:')
     await bot.copy_message(
         from_chat_id=student_id,
         message_id=callback.message.message_id - 1,
@@ -78,7 +78,7 @@ async def start_conversation(
     )
 
     await callback.message.answer(
-        f"Диалог с куратором начат", reply_markup=CANCEL_KEYBOARD
+        f"Диалог со специалистом начат", reply_markup=CANCEL_KEYBOARD
     )
 
 
@@ -100,7 +100,7 @@ async def handle_curator_chat(
         )
         await bot.send_message(
             chat_id=student_id,
-            text="Куратор завершил диалог",
+            text="Специалист завершил диалог",
             reply_markup=types.ReplyKeyboardRemove(),
         )
         return
@@ -132,7 +132,7 @@ async def handle_student_chat(
         )
         await bot.send_message(
             chat_id=curator_id,
-            text=f"Студент {student_id} завершил диалог",
+            text=f"Клиент {student_id} завершил диалог",
             reply_markup=types.ReplyKeyboardRemove(),
         )
         return
