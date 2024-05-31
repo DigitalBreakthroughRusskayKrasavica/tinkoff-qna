@@ -1,0 +1,75 @@
+version: '3.3'
+services:
+  curator-support-web:
+    image: curator-support
+    container_name: curator-support-web
+    ports:
+      - "8000:8000"
+    restart: always
+    environment:
+      - CURATOR_SUPPORT_CONFIG_PATH=.configs/app.docker.toml
+      - RASA_HOST=rasa
+    command: sh -c "python -m curator_support.main.web"
+    depends_on:
+      - pgsql
+      - db_migration
+      - redis
+      - rasa
+
+  rasa:
+    image: curator-support
+    container_name: curator-support-rasa
+    restart: always
+    environment:
+      - CURATOR_SUPPORT_CONFIG_PATH=.configs/app.docker.toml
+      - RASA_HOST=rasa
+    command: sh -c "cd src/curator_support/lms/rasa && python start.py && python -m rasa run -p 6060 -i 127.0.0.1 --enable-api -m ./models/model.tar.gz"
+    depends_on:
+      - pgsql
+      - db_migration
+      - redis
+
+  curator-support-bot:
+    image: curator-support
+    container_name: curator-support-bot
+    restart: always
+    environment:
+      - CURATOR_SUPPORT_CONFIG_PATH=.configs/app.docker.toml
+      - RASA_HOST=rasa
+    command: sh -c "python -m curator_support.main.bot"
+    depends_on:
+      - pgsql
+      - db_migration
+      - redis
+
+  db_migration:
+    image: curator-support
+    container_name: db_migration
+    restart: "on-failure"
+    environment:
+      - CURATOR_SUPPORT_CONFIG_PATH=.configs/app.docker.toml
+    depends_on:
+      - pgsql
+    command: sh -c "python -m alembic upgrade head"
+
+  pgsql:
+    image: postgres:16.0-alpine3.18
+    container_name: pgsql
+    ports:
+      - "5432:5432"
+    env_file:
+      - .configs/db.env
+    volumes:
+      - /curator-support/postgresql/data:/var/lib/postgresql/data
+    restart: always
+
+  redis:
+    image: redis:7.2.4-alpine
+    container_name: "redis"
+    restart: "unless-stopped"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "/hotel-bot/redis/config:/usr/local/etc/redis"
+      - "/hotel-bot/redis/data:/data"
+    command: "redis-server"

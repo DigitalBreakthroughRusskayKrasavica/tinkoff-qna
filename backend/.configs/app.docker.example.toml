@@ -1,0 +1,27 @@
+# Application config file
+
+[app]
+title = "curator-support"
+description = "A server part of curator-support"
+jwt_secret = "SECRET"
+
+[http_server]
+host = "0.0.0.0"
+port = 8000
+log_level = "info"
+
+
+[db]
+user = "postgres"
+password = "postgres"
+name = "postgres"
+host = "pgsql"
+port = 5432
+
+[bot]
+token = 'your token'
+curator_auth_key = 'secret'
+
+[redis]
+host = "redis"
+port = 6379

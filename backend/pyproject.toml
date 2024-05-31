@@ -1,0 +1,137 @@
+[build-system]
+requires = ["setuptools>=65.5.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tinkoff_qna"
+version = "0.1.0"
+description = "Server part of the tinkoff-qna."
+authors = [
+    { name = "akiko23", email = "dmvasilenko43@gmail.com" },
+]
+license = { text = "MIT License" }
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "aiogram==3.5.0",
+    "fastapi==0.104.1",
+    "torch==2.3.0",
+    "asyncpg==0.29.0",
+    "SQLAlchemy==2.0.23",
+    "alembic==1.12.1",
+    "uvicorn==0.24.0.post1",
+    "pydantic[email]==2.5.2",
+    "fastapi-users==12.1.2",
+    "fastapi-users-db-sqlalchemy==6.0.1",
+    "pandas==2.2.2",
+    "sentence-transformers==2.7.0",
+    "toml==0.10.2",
+    "redis==5.0.4",
+    "psycopg2-binary==2.9.9",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest==7.4.3",
+    "pytest-asyncio==0.21.1",
+    "httpx==0.25.2",
+]
+lint = [
+    "mypy==1.7.1",
+    "isort==5.12.0",
+    "ruff==0.3.4",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/DigitalBreakthroughRusskayKrasavica/tinkoff-qna"
+"Bug Tracker" = "https://github.com/DigitalBreakthroughRusskayKrasavica/tinkoff-qna/issues"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+pythonpath = [
+    ".",
+    "src",
+]
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".idea",
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "venv",
+    ".configs/db.env",
+    "*/migrations/versions",
+]
+
+# Same as Black.
+line-length = 98
+indent-width = 4
+
+# Assume Python 3.11
+target-version = "py311"
+
+pydocstyle.convention = "pep257"
+
+
+[tool.ruff.lint]
+select = ["E", "F", "C", "D", "W"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-line-length = "dynamic"
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+
+# Isort configuration
+[tool.isort]
+include_trailing_comma = true
+use_parentheses = true
+multi_line_output = 3
+skip_glob = ["docs/*", "*/migrations/versions"]
+
+
+[tool.mypy]
+strict = true
+python_version = "3.11"
+ignore_missing_imports = true
+install_types = true
+non_interactive = true
+plugins = [
+    "pydantic.mypy",
+    "sqlalchemy.ext.mypy.plugin",
+]
+
+# from https://blo g.wolt.com/engineering/2021/09/30/professional-grade-mypy-configuration/
+disallow_untyped_defs = true
+no_implicit_optional = true
+check_untyped_defs = true
+warn_return_any = true
+show_error_codes = true
+warn_unused_ignores = false
+
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+disallow_any_unimported = false
