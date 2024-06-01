@@ -21,7 +21,7 @@
       pip install -e .
       ```
       
-   4. Переименуйте и заполните конфиги (app.example.toml -> app.toml)
+   4. Переименуйте и заполните конфиги (app.example.toml -> app.toml) (заполнение опционально)
    
    5. Запустите бота
       ```
@@ -33,20 +33,21 @@
       python -m tinkoff_qna.main.web
       ```
 
-### Docker
+### via Docker
 
    1. Склонируйте проект и войдите в директорию с ним
       ```
       git clone https://github.com/DigitalBreakthroughRusskayKrasavica/tinkoff-qna
       cd tinkoff-qna/backend
       ```
+   2. Переименуйте и заполните конфиги (app.docker.example.toml -> app.docker.toml, db.example.env -> db.env) (заполнение опционально)
    
-   2. Создайте докер образ
+   3. Создайте докер образ
        ```
        docker build -f Dockerfile -t tinkoff-qna .
        ```
        
-   3. Запустите компоус
+   4. Запустите компоус
        ```
        docker-compose up -d
        ```
