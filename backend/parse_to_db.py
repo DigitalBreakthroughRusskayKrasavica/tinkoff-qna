@@ -55,3 +55,5 @@ def parse_to_db():
                 )
 
             session.commit()
+
+parse_to_db()

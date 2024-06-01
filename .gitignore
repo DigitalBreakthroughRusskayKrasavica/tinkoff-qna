@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
+.idea/
+
 # configs
 backend/.configs/app.docker.toml
 backend/.configs/app.toml

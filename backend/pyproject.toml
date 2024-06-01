@@ -29,6 +29,8 @@ dependencies = [
     "toml==0.10.2",
     "redis==5.0.4",
     "psycopg2-binary==2.9.9",
+    "SpeechRecognition==3.10.4",
+    "pydub==0.25.1",
 ]
 
 [project.optional-dependencies]
