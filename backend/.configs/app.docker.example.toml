@@ -1,5 +1,7 @@
 # Application config file
 
+llm_api_key = ""
+
 [app]
 title = "tinkoff-qna"
 description = "A server part of tinkoff-qna"
