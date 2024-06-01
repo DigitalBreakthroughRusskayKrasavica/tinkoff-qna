@@ -61,20 +61,27 @@ async def become_client(msg: types.Message, state: FSMContext, bot: Bot, service
 
 
 @router.message(F.text, ~SupportTechFilter())
-async def get_question(msg: types.Message, state: FSMContext, service: HelperService):
+async def get_question(msg: types.Message, service: HelperService, bot: Bot):
     question = msg.text
 
+    await bot.send_message(msg.from_user.id, '🤔Нейросеть задумалась')
     try:
         ans, links = await service.get_answer_with_links(question)
-        links = '\n'.join(links)
+        if links:
+            links = '\n'.join(links)
+            links = f'\n\nПохожее:\n{links}\n\nОтвет не устроил?'
+        else:
+            links = ""
+
+        await bot.delete_message(msg.from_user.id, msg.message_id + 1)
         await msg.answer(
-            text=f"{ans}\n\nПохожее:\n{links}\n\nОтвет не устроил?",
+            text=f"{ans}{links}",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[
                     [
                         InlineKeyboardButton(
                             text="Связаться с тех. поддержкой",
-                            callback_data=f'start_conversation-{msg.chat.id}'
+                            callback_data=f'start_conversation-{msg.chat.id}-{msg.message_id}'
                         )
                     ]
                 ]
@@ -87,10 +94,12 @@ async def get_question(msg: types.Message, state: FSMContext, service: HelperSer
         pass
 
 
-
+# 0.2532536602930813
 
 @router.message(F.voice, ~SupportTechFilter())
-async def get_question_by_audio(msg: types.Message, state: FSMContext, service: HelperService, bot: Bot):
+async def get_question_by_audio(msg: types.Message, service: HelperService, bot: Bot):
+    await bot.send_message(msg.from_user.id, '🤔Нейросеть задумалась')
+
     file_info = await bot.get_file(msg.voice.file_id)
     downloaded_file = await bot.download_file(file_info.file_path)
 
@@ -108,6 +117,8 @@ async def get_question_by_audio(msg: types.Message, state: FSMContext, service: 
     try:
         ans, links = await service.get_answer_with_links(question)
         links = '\n'.join(links)
+
+        await bot.delete_message(msg.from_user.id, msg.message_id + 1)
         await msg.answer(
             text=f"{ans}.\n\nПохожее:\n{links}\n\nОтвет не устроил?",
             reply_markup=InlineKeyboardMarkup(

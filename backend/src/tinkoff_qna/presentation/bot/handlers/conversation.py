@@ -43,6 +43,7 @@ async def start_conversation(
         return
 
     student_id = int(callback.data.split("-")[1])
+    message_id = int(callback.data.split("-")[-1])
 
     curator_id = await service.find_unassigned_curator(redis_connection)
     if curator_id == 0:
@@ -73,7 +74,7 @@ async def start_conversation(
     await bot.send_message(curator_id, text=f'Клиент {student_id} спрашивает:')
     await bot.copy_message(
         from_chat_id=student_id,
-        message_id=callback.message.message_id - 1,
+        message_id=message_id,
         chat_id=curator_id,
     )
 
