@@ -20,7 +20,7 @@ port = 5432
 
 [bot]
 token = 'your token'
-curator_auth_key = 'secret'
+support_tech_auth_key = 'secret'
 
 [redis]
 host = "redis"
