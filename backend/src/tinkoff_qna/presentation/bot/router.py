@@ -103,7 +103,7 @@ async def get_question_by_audio(msg: types.Message, service: HelperService, bot:
     file_info = await bot.get_file(msg.voice.file_id)
     downloaded_file = await bot.download_file(file_info.file_path)
 
-    filename = f'audio_{datetime.datetime.now()}.ogg'
+    filename = f'audio_{datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")}.ogg'
     with open(filename, 'wb') as f:
         f.write(downloaded_file.read())
 

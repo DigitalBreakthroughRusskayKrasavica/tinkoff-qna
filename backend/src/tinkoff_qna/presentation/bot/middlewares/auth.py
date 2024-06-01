@@ -75,9 +75,9 @@ class AuthMiddleware(BaseMiddleware):
         user = await self._repo.get_user_by_id(chat_id)
         return await bot.send_message(
             chat_id=chat_id,
-            text='Задайте ваш вопрос'
+            text=WELCOME_MESSAGE
             if user.role == Role.CLIENT
-            else "Добро пожаловать снова.\nВаша роль: 'Cпециалист Техподдержки'\n❗️Специалист тех. поддержки не может задавать вопросы",
+            else WELCOME_MESSAGE+"\nВаша роль: 'Cпециалист Техподдержки'\n❗️Специалист тех. поддержки не может задавать вопросы",
         )
 
     def _msg_is_command_start(self, msg: types.Message) -> bool:

@@ -31,8 +31,6 @@ class BertModel:
 
         loop = asyncio.get_event_loop()
         best_answers, links = await loop.run_in_executor(None, self.find_best, question)
-        if len(best_answers) == 1:
-            return best_answers[0], links
 
         text = f"Найди информацию в инструкциях, которая может быть ответом к этому вопросу: {question}?"
 
@@ -46,13 +44,11 @@ class BertModel:
             "messages": [
                 {
                     "role": "system",
-                    "text": """
-                    Ты умный помощник, тебя зовут "Русская красавица", ты должен отвечать на вопросы только по инструкциям.
-                    Если в инструкции нет информации ничего не пиши.
-                    Не давай лишней информации, не относящейся к вопросу.
-                    НЕ пиши ничего, кроме ответа на поставленный вопрос.
-                    НЕ давай НИКАКИХ комментариев к инструкциям.
-                    """
+                    "text": """Ты умный помощник, тебя зовут "Русская красавица", ты должен отвечать на вопросы только по инструкциям.
+Если в инструкции нет информации ничего не пиши.
+Не давай лишней информации, не относящейся к вопросу.
+НЕ пиши ничего, кроме ответа на поставленный вопрос.
+НЕ давай НИКАКИХ комментариев к инструкциям."""
                 },
                 *[
                     {
@@ -77,7 +73,8 @@ class BertModel:
             result = await response.json()
         try:
             answer = result["result"]["alternatives"][0]["message"]["text"]
-        except Exception:
+        except Exception as e:
+            print(answer, e)
             answer = best_answers[0]
         return answer, links
 
@@ -97,6 +94,7 @@ class BertModel:
             distances[(question, i)] = (dist, answer, url)
 
         dists = sorted(list(distances.items()), key=lambda a: a[1][0])[:10]
+
         closest_one = dists[0]
 
         # if closest_one[1][0] > 0.1:
@@ -121,15 +119,16 @@ class BertModel:
         print()
         print(best_answers)
         print()
-        print(dists)
+        print()
+        print('Distances:', dists)
 
         return best_answers, answer_links
 
 
 # model = BertModel("postgresql://postgres:postgres@localhost:5432/postgres")
-
+#
 # ans = model.find_best('Каким образом можно переместить контракт из другого банка ?')
-
+#
 # print()
 # print()
 # print(ans)
