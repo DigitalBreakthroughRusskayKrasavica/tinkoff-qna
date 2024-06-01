@@ -4,6 +4,7 @@ import subprocess
 import speech_recognition as sr
 from aiogram import Bot, F, Router, types
 from aiogram.enums.parse_mode import ParseMode
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import (BotCommandScopeChat, InlineKeyboardButton,
@@ -32,6 +33,7 @@ async def help(msg: types.Message):
 нажав на кнопку 'Связаться с тех. поддержкой', которая находится под каждым ответом.
 """)
 
+
 @router.message(Command('become_tech_support'))
 async def become_tech_support(msg: types.Message, state: FSMContext, bot: Bot, service: HelperService):
     await service.change_role(msg.chat.id, Role.SUPPORT_TECHNICIAN)
@@ -48,7 +50,6 @@ async def become_client(msg: types.Message, state: FSMContext, bot: Bot, service
     await msg.answer("Вы теперь клиент")
 
 
-
 @router.message(F.text, ~SupportTechFilter())
 async def get_question(msg: types.Message, service: HelperService, bot: Bot):
     question = msg.text
@@ -56,8 +57,10 @@ async def get_question(msg: types.Message, service: HelperService, bot: Bot):
     await bot.send_message(msg.from_user.id, '🤔Нейросеть задумалась')
     try:
         ans, links = await service.get_answer_with_links(question)
+        links = [link[:-1] if link[-1] == '/' else link for link in links]
+
         if links:
-            links = '\n'.join(links)
+            links = '\n'.join(links).strip()
             links = f'\n\nПохожее:\n{links}\n\nОтвет не устроил?'
         else:
             links = ""
@@ -81,6 +84,8 @@ async def get_question(msg: types.Message, service: HelperService, bot: Bot):
         pass
     except exceptions.QuestionNeedsСlarification:
         pass
+    except TelegramBadRequest as e:
+        print(ans, e)
 
 
 # 0.2532536602930813
@@ -105,6 +110,8 @@ async def get_question_by_audio(msg: types.Message, service: HelperService, bot:
 
     try:
         ans, links = await service.get_answer_with_links(question)
+        links = [link[:-1] if link[-1] == '/' else link for link in links]
+
         links = '\n'.join(links)
 
         await bot.delete_message(msg.from_user.id, msg.message_id + 1)
@@ -130,6 +137,7 @@ async def get_question_by_audio(msg: types.Message, service: HelperService, bot:
 
 # initialize the recognizer
 r = sr.Recognizer()
+
 
 def transcribe_audio(path):
     # use the audio file as the audio source
