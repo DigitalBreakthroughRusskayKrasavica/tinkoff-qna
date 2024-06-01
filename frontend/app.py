@@ -1,11 +1,15 @@
-import gradio as gr
+
 import requests
 
-API_URL = 'http://localhost:8000'
+API_URL = 'http://147.45.252.109:8000'
+
+import gradio as gr
+import speech_recognition as sr
+
 
 def send_to_api(question: str) -> str:
     res = requests.post(
-        url=API_URL + '/assist', 
+        url=API_URL + '/assist',
         json={'title': question},
         headers={"Content-Type": "application/json; charset=utf-8"},
     ).json()
@@ -14,8 +18,23 @@ def send_to_api(question: str) -> str:
     return f'{answer}\n\nПодробнее:\n{links}'
 
 
+r = sr.Recognizer()
+
+
+def transcribe_audio(path):
+    # use the audio file as the audio source
+    with sr.AudioFile(path) as source:
+        audio_listened = r.record(source)
+        # try converting it to text
+        text = r.recognize_google(audio_listened, language="ru-RU")
+    return text
+
+
 def get_answer(question: str, audio: str) -> tuple[str, str, None]:
-    print(f'question: {question}\naudio: {audio}')
+    if not (audio or question):
+        return 'send audio or question', '', None
+    if not question:
+        return send_to_api(transcribe_audio(audio)), '', None
     return send_to_api(question), '', None
 
 
@@ -36,11 +55,6 @@ with gr.Blocks() as demo:
         inputs=[question, audio],
         outputs=[answer, question, audio]
     )
-
-
-if __name__ == '__main__':
-    demo.launch(share=True, server_port=8042)
-
 
 if __name__ == '__main__':
     demo.launch(share=True, server_port=8042)
