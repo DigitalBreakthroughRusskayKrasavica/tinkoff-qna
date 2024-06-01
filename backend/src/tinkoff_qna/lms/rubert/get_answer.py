@@ -44,7 +44,8 @@ class BertModel:
         dists = sorted(list(distances.items()), key=lambda a: a[1][0])[:10]
         closest_one = dists[0]
 
-        print(dists)
+        if closest_one[1][0] > 0.1:
+            return 'Не получилось найти ответ - свяжитесь со специалистом техподдержки', []
 
         answer_links = set()
         final_answer = closest_one[1][1]
@@ -60,7 +61,10 @@ class BertModel:
                 if question_text not in occured_questions:
                     final_answer += f'\n\n{answer_text}'
                     occured_questions.add(question_text)
-
+        
+        print(sentence)
+        print()
+        print(dists)
         return final_answer, answer_links
 
 

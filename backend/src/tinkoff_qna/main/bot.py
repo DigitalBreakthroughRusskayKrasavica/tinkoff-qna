@@ -27,7 +27,7 @@ LOGGING_FORMAT = "%(asctime)s %(name)s %(levelname)s: %(message)s"
 
 async def main() -> None:
     logging.basicConfig(level=logging.INFO, format=LOGGING_FORMAT)
-    cfg = load_bot_config(os.getenv("CURATOR_SUPPORT_CONFIG_PATH") or DEFAULT_CONFIG_PATH)
+    cfg = load_bot_config(os.getenv("TINKOFF_QNA_CONFIG_PATH") or DEFAULT_CONFIG_PATH)
 
     storage = RedisStorage.from_url(cfg.redis.dsn)
     storage.key_builder = DefaultKeyBuilder(with_destiny=True)

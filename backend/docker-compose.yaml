@@ -1,53 +1,37 @@
 version: '3.3'
 services:
-  curator-support-web:
-    image: curator-support
-    container_name: curator-support-web
+  tinkoff-qna-web:
+    image: tinkoff-qna
+    container_name: tinkoff-qna-web
     ports:
       - "8000:8000"
     restart: always
     environment:
-      - CURATOR_SUPPORT_CONFIG_PATH=.configs/app.docker.toml
-      - RASA_HOST=rasa
-    command: sh -c "python -m curator_support.main.web"
-    depends_on:
-      - pgsql
-      - db_migration
-      - redis
-      - rasa
-
-  rasa:
-    image: curator-support
-    container_name: curator-support-rasa
-    restart: always
-    environment:
-      - CURATOR_SUPPORT_CONFIG_PATH=.configs/app.docker.toml
-      - RASA_HOST=rasa
-    command: sh -c "cd src/curator_support/lms/rasa && python start.py && python -m rasa run -p 6060 -i 127.0.0.1 --enable-api -m ./models/model.tar.gz"
+      - TINKOFF_QNA_CONFIG_PATH=.configs/app.docker.toml
+    command: sh -c "python -m tinkoff_qna.main.web"
     depends_on:
       - pgsql
       - db_migration
       - redis
 
-  curator-support-bot:
-    image: curator-support
-    container_name: curator-support-bot
+  tinkoff-qna-bot:
+    image: tinkoff-qna
+    container_name: tinkoff-qna-bot
     restart: always
     environment:
-      - CURATOR_SUPPORT_CONFIG_PATH=.configs/app.docker.toml
-      - RASA_HOST=rasa
-    command: sh -c "python -m curator_support.main.bot"
+      - TINKOFF_QNA_CONFIG_PATH=.configs/app.docker.toml
+    command: sh -c "python -m tinkoff_qna.main.bot"
     depends_on:
       - pgsql
       - db_migration
       - redis
 
   db_migration:
-    image: curator-support
+    image: tinkoff-qna
     container_name: db_migration
     restart: "on-failure"
     environment:
-      - CURATOR_SUPPORT_CONFIG_PATH=.configs/app.docker.toml
+      - TINKOFF_QNA_CONFIG_PATH=.configs/app.docker.toml
     depends_on:
       - pgsql
     command: sh -c "python -m alembic upgrade head"
@@ -60,7 +44,7 @@ services:
     env_file:
       - .configs/db.env
     volumes:
-      - /curator-support/postgresql/data:/var/lib/postgresql/data
+      - /tinkoff-qna/postgresql/data:/var/lib/postgresql/data
     restart: always
 
   redis:
@@ -70,6 +54,6 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - "/hotel-bot/redis/config:/usr/local/etc/redis"
-      - "/hotel-bot/redis/data:/data"
+      - "/tinkoff-qna/redis/config:/usr/local/etc/redis"
+      - "/tinkoff-qna/redis/data:/data"
     command: "redis-server"
