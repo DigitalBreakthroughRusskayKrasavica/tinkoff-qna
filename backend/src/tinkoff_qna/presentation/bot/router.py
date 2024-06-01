@@ -1,5 +1,10 @@
 import asyncio
 
+
+import speech_recognition as sr
+
+import subprocess
+
 from aiogram import Router, Bot, F
 from aiogram.filters import CommandStart
 
@@ -19,6 +24,7 @@ from tinkoff_qna.models import Role
 from tinkoff_qna.presentation.bot.commands import get_support_technician_commands, COMMON_COMMANDS
 
 from tinkoff_qna.presentation.bot.filters import SupportTechFilter
+import datetime
 
 router = Router(name=__name__)
 
@@ -60,25 +66,9 @@ async def get_question(msg: types.Message, state: FSMContext, service: HelperSer
 
     try:
         ans, links = await service.get_answer_with_links(question)
-        if ans == 'Не получилось найти ответ - свяжитесь со специалистом техподдержки':
-            return await msg.answer(
-            text=ans,
-            reply_markup=InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [
-                        InlineKeyboardButton(
-                            text="Связаться со специалистом",
-                            callback_data=f'start_conversation-{msg.chat.id}'
-                        )
-                    ]
-                ]
-            ),
-            parse_mode=ParseMode.MARKDOWN
-        )
-        
         links = '\n'.join(links)
         await msg.answer(
-            text=f"{ans}.\n\nПохожее:\n{links}\n\nОтвет не устроил?",
+            text=f"{ans}\n\nПохожее:\n{links}\n\nОтвет не устроил?",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[
                     [
@@ -98,28 +88,25 @@ async def get_question(msg: types.Message, state: FSMContext, service: HelperSer
 
 
 
-@router.message(F.audio, ~SupportTechFilter())
-async def get_question(msg: types.Message, state: FSMContext, service: HelperService):
-    question = msg.audio
+
+@router.message(F.voice, ~SupportTechFilter())
+async def get_question_by_audio(msg: types.Message, state: FSMContext, service: HelperService, bot: Bot):
+    file_info = await bot.get_file(msg.voice.file_id)
+    downloaded_file = await bot.download_file(file_info.file_path)
+
+    filename = f'audio_{datetime.datetime.now()}.ogg'
+    with open(filename, 'wb') as f:
+        f.write(downloaded_file.read())
+
+    dest_filename = filename.replace('.ogg', '.wav')
+    process = subprocess.run(['ffmpeg', '-i', filename, dest_filename])
+    if process.returncode != 0:
+        raise Exception("Something went wrong")
+
+    question = transcribe_audio(dest_filename)
 
     try:
         ans, links = await service.get_answer_with_links(question)
-        if ans == 'Не получилось найти ответ - свяжитесь со специалистом техподдержки':
-            return await msg.answer(
-            text=ans,
-            reply_markup=InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [
-                        InlineKeyboardButton(
-                            text="Связаться со специалистом",
-                            callback_data=f'start_conversation-{msg.chat.id}'
-                        )
-                    ]
-                ]
-            ),
-            parse_mode=ParseMode.MARKDOWN
-        )
-        
         links = '\n'.join(links)
         await msg.answer(
             text=f"{ans}.\n\nПохожее:\n{links}\n\nОтвет не устроил?",
@@ -139,3 +126,15 @@ async def get_question(msg: types.Message, state: FSMContext, service: HelperSer
         pass
     except exceptions.QuestionNeedsСlarification as e:
         pass
+
+
+# initialize the recognizer
+r = sr.Recognizer()
+
+def transcribe_audio(path):
+    # use the audio file as the audio source
+    with sr.AudioFile(path) as source:
+        audio_listened = r.record(source)
+        # try converting it to text
+        text = r.recognize_google(audio_listened, language="ru-RU")
+    return text

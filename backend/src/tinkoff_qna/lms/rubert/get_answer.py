@@ -78,7 +78,7 @@ class BertModel:
         try:
             answer = result["result"]["alternatives"][0]["message"]["text"]
         except Exception:
-            answer = "Я не могу вам ответить на этот вопрос..."
+            answer = best_answers[0]
         return answer, links
 
 
