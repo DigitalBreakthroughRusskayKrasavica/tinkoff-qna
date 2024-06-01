@@ -4,6 +4,7 @@ from aiogram.types import BotCommand
 
 COMMON_COMMANDS = [
     BotCommand(command="start", description="Перезапустить бота"),
+    BotCommand(command='help', description='Справка о боте'),
     BotCommand(command="become_client", description="[Interactive] Стать клиентом"),
     BotCommand(command="become_tech_support", description="[Interactive] Стать специалистом тех. поддержки"),
 ]
