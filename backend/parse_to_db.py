@@ -27,7 +27,7 @@ def parse_to_db():
     engine = create_db_engine(DB_URI)
     session_factory = create_session_maker(engine)
 
-    model_facade = BertModel(DB_URI)
+    model_facade = BertModel(DB_URI, "")
 
     with open(
             "./train_Tinkoff/dataset.json",
