@@ -1,7 +1,6 @@
 from typing import AsyncGenerator
 
 from sqlalchemy.orm import Session, sessionmaker
-
 from tinkoff_qna.database.sa_utils import create_session
 
 

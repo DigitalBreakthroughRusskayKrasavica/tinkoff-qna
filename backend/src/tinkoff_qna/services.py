@@ -1,14 +1,8 @@
-import asyncio
 import os
 
-from sqlalchemy import select
-
-from tinkoff_qna.lms.rubert.get_answer import BertModel
-from tinkoff_qna.database.repository import DbRepository
-
 from redis.asyncio import Redis
-
-from tinkoff_qna.models import User
+from tinkoff_qna.database.repository import DbRepository
+from tinkoff_qna.lms.rubert.get_answer import BertModel
 
 
 class HelperService:

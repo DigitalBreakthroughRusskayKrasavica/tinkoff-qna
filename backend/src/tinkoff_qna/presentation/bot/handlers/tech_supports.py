@@ -1,9 +1,7 @@
-from aiogram import Router, types, Bot, F
-
+from aiogram import Bot, F, Router, types
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from tinkoff_qna.presentation.bot.filters import SupportTechFilter
 from tinkoff_qna.presentation.bot.states import NewPairForm, NewPromptForm
 from tinkoff_qna.services import HelperService

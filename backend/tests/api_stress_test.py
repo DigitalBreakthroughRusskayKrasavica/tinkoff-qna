@@ -3,7 +3,6 @@ import time
 
 import aiohttp
 
-
 url = "http://localhost:8000"
 
 
@@ -47,8 +46,8 @@ async def main():
     async with aiohttp.ClientSession() as session:
         for question in questions:
             resp = await session.post(
-                url=url + '/assist', 
-                headers={'Content-Type': 'application/json; charset=utf-8'}, 
+                url=url + '/assist',
+                headers={'Content-Type': 'application/json; charset=utf-8'},
                 json={'title': question}
             )
             answer = await resp.json()

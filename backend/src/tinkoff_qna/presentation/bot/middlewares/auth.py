@@ -1,12 +1,12 @@
 from typing import Any, Awaitable, Callable, Dict, Tuple
 
-from aiogram import BaseMiddleware, Bot, types
+from aiogram import BaseMiddleware, types
 from aiogram.enums.message_entity_type import MessageEntityType
 from aiogram.types import BotCommandScopeChat, TelegramObject
-
-from tinkoff_qna.presentation.bot.commands import get_support_technician_commands, COMMON_COMMANDS
 from tinkoff_qna.database.repository import DbRepository
 from tinkoff_qna.models import Role
+from tinkoff_qna.presentation.bot.commands import (
+    COMMON_COMMANDS, get_support_technician_commands)
 
 WELCOME_MESSAGE = """👋Добро пожаловать в бот для поддержки клиентов Tinkoff!
 
@@ -101,4 +101,3 @@ class AuthMiddleware(BaseMiddleware):
         except ValueError:
             command, arg = text, ""
         return command, arg
-        

@@ -2,17 +2,13 @@
 from functools import partial
 
 import uvicorn
-from fastapi import APIRouter, FastAPI
+from fastapi import FastAPI
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from tinkoff_qna.config import HttpServerConfig
 from tinkoff_qna.database.dependencies import get_session
-from tinkoff_qna.database.sa_utils import (
-    create_engine,
-    create_session_maker,
-)
 from tinkoff_qna.database.repository import DbRepository
+from tinkoff_qna.database.sa_utils import create_engine, create_session_maker
 from tinkoff_qna.lms.rubert.get_answer import BertModel
 from tinkoff_qna.services import HelperService
 
@@ -50,13 +46,13 @@ def initialise_dependencies(app: FastAPI, web_cfg: WebConfig) -> None:
     engine = create_engine(web_cfg.db.uri)
     session_factory = create_session_maker(engine)
     helper_service = HelperService(
-        db_repo=DbRepository(session_factory), 
+        db_repo=DbRepository(session_factory),
         rubert_model=BertModel(web_cfg.db.uri, web_cfg.llm_api_key)
     )
-    
+
     app.dependency_overrides[Stub(AsyncSession)] = partial(get_session, session_factory)
     app.dependency_overrides[Stub(WebConfig)] = lambda: web_cfg
-    
+
     app.dependency_overrides[Stub(HelperService)] = lambda: helper_service
 
 

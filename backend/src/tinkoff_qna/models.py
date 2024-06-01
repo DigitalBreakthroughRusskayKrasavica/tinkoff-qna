@@ -1,12 +1,9 @@
 from datetime import datetime
-
-from sqlalchemy import func, ForeignKey
-
-from sqlalchemy.orm import mapped_column, Mapped
-from sqlalchemy.dialects.postgresql import BIGINT, ARRAY, FLOAT
-
 from enum import StrEnum
 
+from sqlalchemy import func
+from sqlalchemy.dialects.postgresql import ARRAY, BIGINT, FLOAT
+from sqlalchemy.orm import Mapped, mapped_column
 from tinkoff_qna.database.base import Base
 
 

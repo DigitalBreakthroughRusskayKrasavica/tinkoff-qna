@@ -1,30 +1,19 @@
-import asyncio
-
-
-import speech_recognition as sr
-
+import datetime
 import subprocess
 
-from aiogram import Router, Bot, F
-from aiogram.filters import CommandStart
-
-from aiogram import types
-from aiogram.filters import StateFilter, Command
-
-from aiogram.fsm.state import default_state
-from aiogram.fsm.context import FSMContext
+import speech_recognition as sr
+from aiogram import Bot, F, Router, types
 from aiogram.enums.parse_mode import ParseMode
-
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, BotCommandScopeChat
-
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.types import (BotCommandScopeChat, InlineKeyboardButton,
+                           InlineKeyboardMarkup)
 from tinkoff_qna import exceptions
-from tinkoff_qna.services import HelperService
 from tinkoff_qna.models import Role
-
-from tinkoff_qna.presentation.bot.commands import get_support_technician_commands, COMMON_COMMANDS
-
+from tinkoff_qna.presentation.bot.commands import (
+    COMMON_COMMANDS, get_support_technician_commands)
 from tinkoff_qna.presentation.bot.filters import SupportTechFilter
-import datetime
+from tinkoff_qna.services import HelperService
 
 router = Router(name=__name__)
 
@@ -54,10 +43,10 @@ async def become_tech_support(msg: types.Message, state: FSMContext, bot: Bot, s
 @router.message(Command('become_client'))
 async def become_client(msg: types.Message, state: FSMContext, bot: Bot, service: HelperService):
     await service.change_role(msg.chat.id, Role.CLIENT)
-    
+
     await bot.set_my_commands(COMMON_COMMANDS, BotCommandScopeChat(chat_id=msg.chat.id))
     await msg.answer("Вы теперь клиент")
-    
+
 
 
 @router.message(F.text, ~SupportTechFilter())
@@ -88,9 +77,9 @@ async def get_question(msg: types.Message, service: HelperService, bot: Bot):
             ),
             parse_mode=ParseMode.MARKDOWN
         )
-    except exceptions.InvalidQuestion as e:
+    except exceptions.InvalidQuestion:
         pass
-    except exceptions.QuestionNeedsСlarification as e:
+    except exceptions.QuestionNeedsСlarification:
         pass
 
 
@@ -133,9 +122,9 @@ async def get_question_by_audio(msg: types.Message, service: HelperService, bot:
             ),
             parse_mode=ParseMode.MARKDOWN
         )
-    except exceptions.InvalidQuestion as e:
+    except exceptions.InvalidQuestion:
         pass
-    except exceptions.QuestionNeedsСlarification as e:
+    except exceptions.QuestionNeedsСlarification:
         pass
 
 

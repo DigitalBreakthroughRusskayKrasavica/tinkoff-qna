@@ -1,7 +1,5 @@
 from aiogram import types
-
 from aiogram.filters import Filter
-
 from tinkoff_qna.database.repository import DbRepository
 from tinkoff_qna.models import Role
 

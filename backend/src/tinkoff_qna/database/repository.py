@@ -1,9 +1,8 @@
 import logging
 
-from sqlalchemy import select, text, desc
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-
-from tinkoff_qna.models import User, Role, QuestionAnswer
+from tinkoff_qna.models import QuestionAnswer, Role, User
 
 logger = logging.getLogger(__name__)
 

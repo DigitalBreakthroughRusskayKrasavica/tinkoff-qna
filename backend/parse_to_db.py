@@ -1,12 +1,10 @@
-import csv
 import json
 
 from sqlalchemy import text
 from sqlalchemy.engine import Engine, create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy.orm import Session, sessionmaker
 from src.tinkoff_qna.lms.rubert.get_answer import BertModel
+
 
 def parse_to_db():
     def create_db_engine(db_uri: str) -> Engine:
@@ -37,10 +35,10 @@ def parse_to_db():
             for row in data:
                 if len(row['description']) <= 1:
                     continue
-                
+
                 emb = model_facade.generate_embeddings([row['title']])
                 session.execute(
-                    statement=text('INSERT INTO question_answer (question, product, source, url, type, embedding, parent_title, parent_url, answer) VALUES (:question, :product, :source, :url, :type, :embedding, :parent_title, :parent_url, :answer)'), 
+                    statement=text('INSERT INTO question_answer (question, product, source, url, type, embedding, parent_title, parent_url, answer) VALUES (:question, :product, :source, :url, :type, :embedding, :parent_title, :parent_url, :answer)'),
                     params={
                         'question': row['title'],
                         'product': row['product'],

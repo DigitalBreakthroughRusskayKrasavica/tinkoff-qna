@@ -1,17 +1,13 @@
 import logging
 
 from aiogram import Bot, F, Router, types
-from aiogram.filters import StateFilter
+from aiogram.filters import Filter, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
-from aiogram.filters import Filter
-
-from tinkoff_qna.presentation.bot.states import Conversation
-from tinkoff_qna.presentation.bot.filters import SupportTechFilter
-
 from redis.asyncio import Redis
-
+from tinkoff_qna.presentation.bot.filters import SupportTechFilter
+from tinkoff_qna.presentation.bot.states import Conversation
 from tinkoff_qna.services import HelperService
 
 logger = logging.getLogger(__name__)
@@ -79,7 +75,7 @@ async def start_conversation(
     )
 
     await callback.message.answer(
-        f"Диалог со специалистом начат", reply_markup=CANCEL_KEYBOARD
+        "Диалог со специалистом начат", reply_markup=CANCEL_KEYBOARD
     )
 
 

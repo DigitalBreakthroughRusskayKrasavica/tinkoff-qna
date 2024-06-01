@@ -4,12 +4,10 @@ import asyncio
 import os
 import sys
 
-from tinkoff_qna.presentation.web.app_setup import (
-    create_app,
-    create_http_server,
-    initialise_dependencies,
-    initialise_routers,
-)
+from tinkoff_qna.presentation.web.app_setup import (create_app,
+                                                    create_http_server,
+                                                    initialise_dependencies,
+                                                    initialise_routers)
 from tinkoff_qna.presentation.web.config import load_web_config
 
 DEFAULT_CONFIG_PATH = ".configs/app.toml"

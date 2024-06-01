@@ -1,11 +1,8 @@
-import csv
-import aiohttp
 import asyncio
 
-from sentence_transformers import SentenceTransformer
-
+import aiohttp
 from scipy.spatial import distance
-
+from sentence_transformers import SentenceTransformer
 from sqlalchemy import text
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -79,7 +76,7 @@ class BertModel:
         return answer, links
 
 
-    def find_best(self, sentence: str) -> tuple[str, list[str]]: 
+    def find_best(self, sentence: str) -> tuple[str, list[str]]:
         emb = self.model.encode([sentence])[0]
 
         with self.session_factory() as session:
@@ -107,14 +104,14 @@ class BertModel:
         for question, answer in dists:
             question_text, _ = question
             dist, answer_text, url = answer
-            
+
             if dist - closest_one[1][0] == 0:
                 answer_links.add(url)
             elif dist - closest_one[1][0] < 0.04:
                 if question_text not in occured_questions:
                     best_answers.append(answer_text)
                     occured_questions.add(question_text)
-        
+
         print(sentence)
         print()
         print(best_answers)

@@ -1,12 +1,9 @@
 from dataclasses import dataclass
 
 from fastapi import APIRouter, Depends
-
+from pydantic import BaseModel
 from tinkoff_qna.presentation.web.depends_stub import Stub
 from tinkoff_qna.services import HelperService
-
-
-from pydantic import BaseModel
 
 router = APIRouter(prefix='')
 
@@ -19,10 +16,10 @@ class RequestBody(BaseModel):
 class AssistResponse:
     title: str
     links: list[str]
-    
+
 @router.post('/assist')
 async def assist(
-    body: RequestBody, 
+    body: RequestBody,
     service: HelperService = Depends(Stub(HelperService))
 ) -> AssistResponse:
     ans, links = await service.get_answer_with_links(question=body.title)

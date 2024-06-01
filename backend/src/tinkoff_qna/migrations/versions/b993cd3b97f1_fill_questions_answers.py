@@ -8,7 +8,6 @@ Create Date: 2024-06-01 11:31:42.783085
 from typing import Sequence, Union
 
 from alembic import op
-
 from parse_to_db import parse_to_db
 
 # revision identifiers, used by Alembic.

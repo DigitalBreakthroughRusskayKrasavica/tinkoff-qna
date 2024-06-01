@@ -2,7 +2,6 @@
 from dataclasses import dataclass
 
 import toml
-
 from tinkoff_qna.config import DbConfig, HttpServerConfig
 
 DEFAULT_APP_TITLE: str = "tinkoff_qna"

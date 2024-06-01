@@ -4,22 +4,19 @@ import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
-
-from tinkoff_qna.services import HelperService
-
-from tinkoff_qna.presentation.bot.config import load_bot_config
-from tinkoff_qna.presentation.bot.middlewares import DIMiddleware
-from tinkoff_qna.presentation.bot.middlewares.auth import AuthMiddleware
-
+from redis.asyncio import Redis
 from tinkoff_qna.database.repository import DbRepository
 from tinkoff_qna.database.sa_utils import create_engine, create_session_maker
 from tinkoff_qna.lms.rubert.get_answer import BertModel
-
+from tinkoff_qna.presentation.bot.config import load_bot_config
+from tinkoff_qna.presentation.bot.handlers.conversation import \
+    router as conversation_router
+from tinkoff_qna.presentation.bot.handlers.tech_supports import \
+    router as curator_router
+from tinkoff_qna.presentation.bot.middlewares import DIMiddleware
+from tinkoff_qna.presentation.bot.middlewares.auth import AuthMiddleware
 from tinkoff_qna.presentation.bot.router import router
-from tinkoff_qna.presentation.bot.handlers.tech_supports import router as curator_router
-from tinkoff_qna.presentation.bot.handlers.conversation import router as conversation_router
-
-from redis.asyncio import Redis
+from tinkoff_qna.services import HelperService
 
 DEFAULT_CONFIG_PATH = ".configs/app.toml"
 LOGGING_FORMAT = "%(asctime)s %(name)s %(levelname)s: %(message)s"

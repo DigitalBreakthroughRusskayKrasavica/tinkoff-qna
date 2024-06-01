@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
 import toml
-
 from tinkoff_qna.config import DbConfig, RedisConfig
 
 
@@ -12,7 +11,7 @@ class BotConfig:
     support_tech_auth_key: str
     db: DbConfig
     redis: RedisConfig
-    
+
 
 
 def load_bot_config(config_path: str) -> BotConfig:
