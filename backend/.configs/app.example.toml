@@ -1,8 +1,8 @@
 # Application config file
 
 [app]
-title = "curator-support"
-description = "A server part of curator-support"
+title = "tinkoff-qna"
+description = "A server part of tinkoff-qna"
 jwt_secret = "SECRET"
 
 [http_server]
