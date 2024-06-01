@@ -51,7 +51,7 @@ def initialise_dependencies(app: FastAPI, web_cfg: WebConfig) -> None:
     session_factory = create_session_maker(engine)
     helper_service = HelperService(
         db_repo=DbRepository(session_factory), 
-        rubert_model=BertModel(web_cfg.db.uri)
+        rubert_model=BertModel(web_cfg.db.uri, web_cfg.llm_api_key)
     )
     
     app.dependency_overrides[Stub(AsyncSession)] = partial(get_session, session_factory)

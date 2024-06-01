@@ -41,7 +41,7 @@ async def main() -> None:
     session_factory = create_session_maker(engine)
 
     db_repo = DbRepository(session_factory)
-    bert_model = BertModel(cfg.db.uri)
+    bert_model = BertModel(cfg.db.uri, cfg.llm_api_key)
 
     helper_service = HelperService(db_repo, bert_model)
 

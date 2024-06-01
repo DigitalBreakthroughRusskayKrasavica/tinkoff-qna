@@ -24,9 +24,7 @@ class HelperService:
 
 
     async def get_answer_with_links(self, question: str) -> tuple[str, list[str]]:
-        loop = asyncio.get_event_loop()
-
-        answer, links = await loop.run_in_executor(None, self.rubert_model.find_best, question)
+        answer, links = await self.rubert_model.get_answer(question)
         return answer, links
 
     async def add_new_pair(self, question, category, answer, url):

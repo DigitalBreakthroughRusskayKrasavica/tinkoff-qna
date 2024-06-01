@@ -8,6 +8,7 @@ from aiogram.filters import StateFilter, Command
 
 from aiogram.fsm.state import default_state
 from aiogram.fsm.context import FSMContext
+from aiogram.enums.parse_mode import ParseMode
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, BotCommandScopeChat
 
@@ -57,7 +58,8 @@ async def get_question(msg: types.Message, state: FSMContext, service: HelperSer
                         )
                     ]
                 ]
-            )
+            ),
+            parse_mode=ParseMode.MARKDOWN
         )
         
         links = '\n'.join(links)
@@ -72,7 +74,8 @@ async def get_question(msg: types.Message, state: FSMContext, service: HelperSer
                         )
                     ]
                 ]
-            )
+            ),
+            parse_mode=ParseMode.MARKDOWN
         )
     except exceptions.InvalidQuestion as e:
         pass

@@ -29,6 +29,7 @@ class AppConfig:
 
 @dataclass(frozen=True, kw_only=True)
 class WebConfig:
+    llm_api_key: str
     app: AppConfig
     http_server: HttpServerConfig
     db: DbConfig
@@ -43,6 +44,7 @@ def load_web_config(config_path: str) -> WebConfig:
     with open(config_path, "r") as config_file:
         data = toml.load(config_file)
     return WebConfig(
+        llm_api_key=data['llm_api_key'],
         app=AppConfig(**data["app"]),
         http_server=HttpServerConfig(**data["http_server"]),
         db=DbConfig(**data["db"]),
