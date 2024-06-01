@@ -34,7 +34,7 @@ services:
       - TINKOFF_QNA_CONFIG_PATH=.configs/app.docker.toml
     depends_on:
       - pgsql
-    command: sh -c "python -m alembic upgrade head"
+    command: sh -c "python -m alembic upgrade cf6b38c2a4e2 && python -m alembic upgrade head"
 
   pgsql:
     image: postgres:16.0-alpine3.18
