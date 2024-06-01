@@ -69,7 +69,11 @@ class BertModel:
         }
 
         async with aiohttp.ClientSession() as session:
-            response = await session.post(LLM_API_URL, headers=headers, json=prompt)
+            try:
+                response = await session.post(LLM_API_URL, headers=headers, json=prompt, timeout=8)
+            except asyncio.TimeoutError as e:
+                print('An error occured:', e)
+                return best_answers[0], links
             result = await response.json()
         try:
             answer = result["result"]["alternatives"][0]["message"]["text"]
