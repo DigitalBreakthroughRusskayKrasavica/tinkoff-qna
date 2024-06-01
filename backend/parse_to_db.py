@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from src.tinkoff_qna.lms.rubert.get_answer import BertModel
 
 
-def parse_to_db():
+def parse_to_db(uri: str):
     def create_db_engine(db_uri: str) -> Engine:
         engine_options = {
             "echo": False,
@@ -15,17 +15,13 @@ def parse_to_db():
         }
         return create_engine(db_uri, **engine_options)
 
-
     def create_session_maker(engine: Engine) -> sessionmaker[Session]:
         return sessionmaker(engine, autoflush=True, expire_on_commit=False)
 
-
-    DB_URI = "postgresql://postgres:postgres@localhost:5432/postgres"
-
-    engine = create_db_engine(DB_URI)
+    engine = create_db_engine(uri)
     session_factory = create_session_maker(engine)
 
-    model_facade = BertModel(DB_URI, "")
+    model_facade = BertModel(uri, "")
 
     with open(
             "./train_Tinkoff/dataset.json",
@@ -38,7 +34,8 @@ def parse_to_db():
 
                 emb = model_facade.generate_embeddings([row['title']])
                 session.execute(
-                    statement=text('INSERT INTO question_answer (question, product, source, url, type, embedding, parent_title, parent_url, answer) VALUES (:question, :product, :source, :url, :type, :embedding, :parent_title, :parent_url, :answer)'),
+                    statement=text(
+                        'INSERT INTO question_answer (question, product, source, url, type, embedding, parent_title, parent_url, answer) VALUES (:question, :product, :source, :url, :type, :embedding, :parent_title, :parent_url, :answer)'),
                     params={
                         'question': row['title'],
                         'product': row['product'],
